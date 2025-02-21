@@ -6,7 +6,9 @@ This guide explains how to configure an LLM Provider by specifying key details s
 
 ## Demo Video
 
-[AI-ManageLLM.mov](../../Downloads/AI-ManageLLM.mov)
+
+https://github.com/user-attachments/assets/e0c689de-3aff-4ece-8194-c483b4f17b5f
+
 
 ## Configuration Fields
 
