@@ -6,7 +6,7 @@ The AI Column Extraction feature allows users to create new columns by processin
 
 ## Demo Video
 
-[AI-FeatureDemo.mov](../../Downloads/AI-FeatureDemo.mov)
+https://github.com/user-attachments/assets/aed38ce9-d884-4146-a82e-a761a13fed20
 
 ## Configuration
 
