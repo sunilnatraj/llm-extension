@@ -64,10 +64,10 @@ LLMManager.ProcessLLMRequest = async function(llmProviderInfo) {
     });
 };
 
-LLMManager.getPromptHistory = async function () {
+LLMManager.getPromptHistory = async function (_starred) {
     var promptHistory = [];
     let response = await $.get(
-        "command/llm-extension/llm-prompt?"+ $.param({ project: theProject.id }),
+        "command/llm-extension/llm-prompt?"+ $.param({ project: theProject.id, starred: _starred }),
         null,
         function(settings) {
             if(settings){

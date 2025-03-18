@@ -13,9 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LLMUtils {
     private static final Logger logger = LoggerFactory.getLogger("LLMUtils");
@@ -24,6 +27,7 @@ public class LLMUtils {
     public final static String SETTINGS_FILE_NAME = ".saved-llm-connections.json";
     public final static String SAVED_CONNECTION_KEY = "savedConnections";
     public final static String PROMPT_HISTORY_FILE_NAME = ".llm-prompt-history.json";
+    public final static Integer PROMPT_HISTORY_LIMIT = 100;
 
     private static SimpleTextEncryptor textEncryptor = new SimpleTextEncryptor("Aa1Gb@tY7_Y");
     private static ObjectMapper _mapper = new ObjectMapper();
@@ -203,9 +207,18 @@ public class LLMUtils {
 
     public static void addPromptToPromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema) {
         try {
-            PromptHistory promptHistory = new PromptHistory(projectId, providerLabel, responseFormat, systemPrompt, jsonSchema);
+            PromptHistory promptHistory = new PromptHistory(projectId, providerLabel, responseFormat, systemPrompt, jsonSchema, Boolean.FALSE);
             String savedPromptHistoryFile = getExtensionFilePath(PROMPT_HISTORY_FILE_NAME);
             SavedPromptContainer savedPromptContainer = getSavedPromptHistory(savedPromptHistoryFile);
+            if ( savedPromptContainer.getPromptHistory().size() >= PROMPT_HISTORY_LIMIT ) {
+                int _trimSize = (savedPromptContainer.getPromptHistory().size() - PROMPT_HISTORY_LIMIT) + 1;
+                List<PromptHistory> sortedPrompts = savedPromptContainer.getPromptHistory()
+                        .stream()
+                        .sorted(Comparator.comparing(PromptHistory::getLast_accessed_on).reversed())
+                        .collect(Collectors.toList());
+                sortedPrompts = sortedPrompts.subList(0, sortedPrompts.size() - _trimSize);
+                savedPromptContainer.setPromptHistory(sortedPrompts);
+            }
             savedPromptContainer.getPromptHistory().add(promptHistory);
             _mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedPromptHistoryFile), savedPromptContainer);
 
@@ -221,7 +234,7 @@ public class LLMUtils {
         }
     }
 
-    public static List<PromptHistory> getPromptHistory(long projectId) {
+    public static List<PromptHistory> getPromptHistory(long projectId, Boolean starred) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             String filename = getExtensionFilePath(PROMPT_HISTORY_FILE_NAME);
@@ -240,11 +253,18 @@ public class LLMUtils {
                 }
             }
             SavedPromptContainer savedPromptContainer = getSavedPromptHistory(filename);
+            if ( starred ) {
+                // Keep only prompts where field starred is True
+                List<PromptHistory> filteredPrompts = savedPromptContainer.getPromptHistory()
+                        .stream()
+                        .filter(PromptHistory::isStarred)
+                        .collect(Collectors.toList());
+                savedPromptContainer.setPromptHistory(filteredPrompts);
+            }
             savedPromptContainer.getPromptHistory().sort(Comparator
-                    .<PromptHistory, Boolean>comparing(p -> !(p.getProjectId() == projectId)) // Prioritize target project
-                    .thenComparing(PromptHistory::getAdded_on, Comparator.reverseOrder()) // Finally, sort by added_on (newest first)
+                    .<PromptHistory, Boolean>comparing(p -> !(p.getProjectId() == projectId))
+                    .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder())  
             );
-
             return savedPromptContainer.getPromptHistory();
         } catch (JsonParseException e) {
             logger.error("JsonParseException: {}", e);
@@ -254,5 +274,55 @@ public class LLMUtils {
             logger.error("IOException: {}", e);
         }
         return null;
+    }
+
+    public static void togglePromptStarred(String promptId) {
+        try {
+            String savedPromptHistoryFile = getExtensionFilePath(PROMPT_HISTORY_FILE_NAME);
+            SavedPromptContainer savedPromptContainer = getSavedPromptHistory(savedPromptHistoryFile);
+            List<PromptHistory> promptHistoryList = savedPromptContainer.getPromptHistory();
+            for (PromptHistory prompt : promptHistoryList) {
+                if (prompt.getPromptId().equals(promptId)) {
+                    prompt.setStarred(!prompt.isStarred());
+                    break;
+                }
+            }
+            savedPromptContainer.setPromptHistory(promptHistoryList);
+            _mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedPromptHistoryFile), savedPromptContainer);
+        } catch (JsonGenerationException e1) {
+            logger.error("JsonGenerationException: {}", e1);
+            // e1.printStackTrace();
+        } catch (JsonMappingException e1) {
+            logger.error("JsonMappingException: {}", e1);
+            // e1.printStackTrace();
+        } catch (IOException e1) {
+            logger.error("IOException: {}", e1);
+            // e1.printStackTrace();
+        }
+    }
+
+    public static void touchPrompt(String promptId) {
+        try {
+            String savedPromptHistoryFile = getExtensionFilePath(PROMPT_HISTORY_FILE_NAME);
+            SavedPromptContainer savedPromptContainer = getSavedPromptHistory(savedPromptHistoryFile);
+            List<PromptHistory> promptHistoryList = savedPromptContainer.getPromptHistory();
+            for (PromptHistory prompt : promptHistoryList) {
+                if (prompt.getPromptId().equals(promptId)) {
+                    prompt.setLast_accessed_on(Timestamp.from(Instant.now()));
+                    break;
+                }
+            }
+            savedPromptContainer.setPromptHistory(promptHistoryList);
+            _mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedPromptHistoryFile), savedPromptContainer);
+        } catch (JsonGenerationException e1) {
+            logger.error("JsonGenerationException: {}", e1);
+            // e1.printStackTrace();
+        } catch (JsonMappingException e1) {
+            logger.error("JsonMappingException: {}", e1);
+            // e1.printStackTrace();
+        } catch (IOException e1) {
+            logger.error("IOException: {}", e1);
+            // e1.printStackTrace();
+        }
     }
 }

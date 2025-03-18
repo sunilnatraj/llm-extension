@@ -18,14 +18,14 @@ div.input-container-llm>input, div.input-container-llm>textarea {
 }
 
 #llm-preview-tabs ul li {
-    margin-right: 10px;    /* Add spacing between tabs */
+    margin-right: 0px;    /* Add spacing between tabs */
 }
 
 #llm-preview-tabs ul li a {
     display: inline-block; /* Ensure full clickable area */
     padding: 0.5em 1em;    /* Add padding for better appearance */
     text-decoration: none; /* Remove underline */
-    background: #ddd;      /* Light background */
+    background: #fff;      /* Light background */
     border-radius: 5px 5px 0 0;
 }
 
@@ -63,6 +63,13 @@ div.input-container-llm>input, div.input-container-llm>textarea {
 }
 
 .history-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 700px;
+    max-width: 100%;
+}
+
+.starred-container {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 700px;
@@ -169,6 +176,25 @@ div.input-container-llm>input, div.input-container-llm>textarea {
 
 /* Ensure all tab content has consistent spacing */
 #llm-preview-tab,
-#llm-history-tab {
+#llm-history-tab
+#llm-starred-tab{
     padding: 10px;
+}
+
+.reuse-icon {
+    width: 16px; /* Adjust as needed */
+    height: 16px;
+    cursor: pointer;
+}
+
+.delete-icon {
+    width: 16px; /* Adjust as needed */
+    height: 16px;
+    cursor: pointer;
+}
+
+.action-container {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Align items vertically */
+    gap: 8px; /* Space between star and reuse icon */
 }

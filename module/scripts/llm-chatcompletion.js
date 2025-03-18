@@ -26,6 +26,8 @@ LLMChatCompletionDialog.prototype.launch = function (column) {
   elmts.cancelButton.text($.i18n('core-buttons/cancel'));
   elmts.or_dialog_preview.html($.i18n('llm-chatcompletion/preview-label'));
   elmts.or_dialog_history.html($.i18n('llm-chatcompletion/history-label'));
+  elmts.or_dialog_starred.html($.i18n('llm-chatcompletion/starred-label'));
+
 
   const colActionSelector = elmts.columnaction;
   colActionSelector.append('<option value="' + "add" + '">' + $.i18n("llm-chatcompletion/col-mode-add") + '</option>');
@@ -123,6 +125,7 @@ LLMChatCompletionDialog.prototype.launch = function (column) {
                   "llm-prompt",
                   {},
                   {
+                    operation: "add",
                     projectId: theProject.id,
                     providerLabel: selectedLLM,
                     responseFormat: selectedresponseFormat,
@@ -150,6 +153,8 @@ LLMChatCompletionDialog.prototype.initTabs = function () {
         self._renderPreview(self.previewInputData);
       } else if (selectedTabId === "llm-history-tab") {
         self._renderHistory();
+      } else if (selectedTabId === "llm-starred-tab") {
+        self._renderStarred();
       }
     }
   });
@@ -281,6 +286,8 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
   var _promptLabel = $.i18n("llm-chatcompletion/history-prompt");
   var _thisProjectLabel = $.i18n("llm-chatcompletion/this-project");
   var _otherProjectLabel = $.i18n("llm-chatcompletion/other-project");
+  var _starHint = $.i18n("llm-chatcompletion/star-hint");
+  var _unStarHint = $.i18n("llm-chatcompletion/unstar-hint");
 
   var container = this._elmts.llmHistoryContainer.empty();
   var table = $('<table></table>').addClass("history-table").appendTo(container);
@@ -296,16 +303,45 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
   var tbody = $('<tbody></tbody>').appendTo(table);
 
   // Add prompt records to table
-  LLMManager.getPromptHistory().then(promptHistory => {
+  LLMManager.getPromptHistory(false).then(promptHistory => {
     for (let prompt of promptHistory) {
       var row = $('<tr></tr>').appendTo(tbody);
 
       var actionCell = $('<td></td>').appendTo(row);
-      $('<button></button>')
-        .text(_reuseButton)
-        .addClass("reuse-button")
-        .data("prompt", prompt)
-        .appendTo(actionCell);
+      var actionContainer = $('<div></div>').addClass("action-container").appendTo(actionCell);
+
+      // ✅ Star Icon (as a clickable `<a>`)
+      var starIcon = $('<a href="javascript:void(0)">&nbsp;</a>') // Prevents navigation issues
+          .addClass(prompt.starred ? "data-table-star-on" : "data-table-star-off")
+          .attr("title", prompt.starred ? _unStarHint  : _starHint)
+          .data("promptId", prompt.promptId) // Store promptId instead of full object
+          .on("click", function (event) {
+              event.preventDefault(); // Prevent accidental navigation
+
+              var promptId = $(this).data("promptId");
+
+              // ✅ Call API to toggle 'starred' state
+              Refine.postProcess(
+                  "llm-extension",
+                  "llm-prompt",
+                  {},
+                  {
+                      operation: "toggleStarred",
+                      promptId: promptId
+                  }
+              );
+
+              // ✅ Toggle class based on current state
+              $(this).toggleClass("data-table-star-on data-table-star-off");
+          });
+      starIcon.appendTo(actionContainer);
+
+      $('<img>')
+          .attr("src", "extension/llm-extension/images/reuse.svg") // Path to the image
+          .addClass("reuse-icon")
+          .attr("title", _reuseButton)
+          .data("prompt", prompt)
+          .appendTo(actionContainer);
 
       $('<td></td>').text(prompt.projectId == theProject.id ? _thisProjectLabel : _otherProjectLabel).appendTo(row);
       $('<td></td>').text(prompt.providerLabel).appendTo(row);
@@ -321,10 +357,20 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
     }
   });
 
-  $(document).off("click", ".reuse-button");
+  $(document).off("click", ".reuse-icon");
 
-  $(document).on("click", ".reuse-button", function () {
+  $(document).on("click", ".reuse-icon", function () {
     var promptData = $(this).data("prompt");
+
+    Refine.postProcess(
+          "llm-extension",
+          "llm-prompt",
+          {},
+          {
+            operation: "reuse",
+            promptId: promptData.promptId
+          }
+    );
 
     // Set selected record details in controls
     $("#llm-selector").val(promptData.providerLabel);
@@ -337,3 +383,111 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
   });
 };
 
+LLMChatCompletionDialog.prototype._renderStarred = function () {
+  var self = this;
+
+  // labels
+  var _actionLabel = $.i18n('llm-chatcompletion/history-action');
+  var _sourceLabel = $.i18n('llm-chatcompletion/history-source');
+  var _reuseButton = $.i18n('llm-chatcompletion/history-reuse');
+  var _providerLabel = $.i18n("llm-chatcompletion/llm-selector");
+  var _responseFormatLabel = $.i18n("llm-chatcompletion/responseformat-selector");
+  var _jsonSchemaLabel = $.i18n("llm-chatcompletion/history-json-schema");
+  var _promptLabel = $.i18n("llm-chatcompletion/history-prompt");
+  var _thisProjectLabel = $.i18n("llm-chatcompletion/this-project");
+  var _otherProjectLabel = $.i18n("llm-chatcompletion/other-project");
+  var _starHint = $.i18n("llm-chatcompletion/star-hint");
+  var _unStarHint = $.i18n("llm-chatcompletion/unstar-hint");
+
+  var container = this._elmts.llmStarredContainer.empty();
+  var table = $('<table></table>').addClass("history-table").appendTo(container);
+  var thead = $('<thead></thead>').appendTo(table);
+  var headerRow = $('<tr></tr>').appendTo(thead);
+  $('<th></th>').text(_actionLabel).appendTo(headerRow);
+  $('<th></th>').text(_sourceLabel).appendTo(headerRow);
+  $('<th></th>').text(_providerLabel).appendTo(headerRow);
+  $('<th></th>').text(_responseFormatLabel).appendTo(headerRow);
+  $('<th></th>').text(_promptLabel).appendTo(headerRow);
+  $('<th></th>').text(_jsonSchemaLabel).appendTo(headerRow);
+
+  var tbody = $('<tbody></tbody>').appendTo(table);
+
+  // Add prompt records to table
+  LLMManager.getPromptHistory(true).then(promptHistory => {
+    for (let prompt of promptHistory) {
+      var row = $('<tr></tr>').appendTo(tbody);
+
+      var actionCell = $('<td></td>').appendTo(row);
+      var actionContainer = $('<div></div>').addClass("action-container").appendTo(actionCell);
+
+      $('<img>')
+        .attr("src", "extension/llm-extension/images/remove.svg") // Path to the image
+        .addClass("delete-icon")
+        .attr("title", _unStarHint)
+        .data("promptId", prompt.promptId)
+        .appendTo(actionContainer);
+
+      $('<img>')
+          .attr("src", "extension/llm-extension/images/reuse.svg") // Path to the image
+          .addClass("reuse-icon")
+          .attr("title", _reuseButton)
+          .data("prompt", prompt)
+          .appendTo(actionContainer);
+
+      $('<td></td>').text(prompt.projectId == theProject.id ? _thisProjectLabel : _otherProjectLabel).appendTo(row);
+      $('<td></td>').text(prompt.providerLabel).appendTo(row);
+      $('<td></td>').text(prompt.responseFormat).appendTo(row);
+      $('<td></td>')
+        .text(prompt.systemPrompt)
+        .addClass("text-truncate")
+        .appendTo(row);
+      $('<td></td>')
+        .text(prompt.jsonSchema)
+        .addClass("text-truncate")
+        .appendTo(row);
+    }
+  });
+
+  $(document).off("click", ".reuse-icon");
+  $(document).on("click", ".reuse-icon", function () {
+    var promptData = $(this).data("prompt");
+
+    Refine.postProcess(
+          "llm-extension",
+          "llm-prompt",
+          {},
+          {
+            operation: "reuse",
+            promptId: promptData.promptId
+          }
+    );
+
+    // Set selected record details in controls
+    $("#llm-selector").val(promptData.providerLabel);
+    $("#responseformat-selector").val(promptData.responseFormat);
+    $("#systemPromptTextareaId").val(promptData.systemPrompt);
+    $("#jsonSchemaTextareaId").val(promptData.jsonSchema);
+
+    $("#llm-preview-tabs").tabs();
+    $("#llm-preview-tabs").tabs("option", "active", 0);  // Switch to the first tab (Preview)
+  });
+
+  $(document).off("click", ".delete-icon");
+  $(document).on("click", ".delete-icon", function () {
+    var promptId = $(this).data("promptId");
+    Refine.postProcess(
+        "llm-extension",
+        "llm-prompt",
+        {},
+        {
+            operation: "toggleStarred",
+            promptId: promptId
+        },
+        {},
+        { onDone: function () {
+            self._renderStarred();
+          }
+        }
+    );
+  });
+};

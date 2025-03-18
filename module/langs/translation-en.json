@@ -47,6 +47,7 @@
   "llm-chatcompletion/response-help-text": "AI-generated response will appear here",
   "llm-chatcompletion/preview-label": "Preview",
   "llm-chatcompletion/history-label": "History",
+  "llm-chatcompletion/starred-label": "Starred",
   "llm-chatcompletion/prompt-help": "Help",
   "llm-extension/processing": "Processing LLM request ...",
   "llm-chatcompletion/select-one": "Select one",
@@ -55,8 +56,11 @@
   "llm-chatcompletion/history-action": "Action",
   "llm-chatcompletion/history-source": "Source",
   "llm-chatcompletion/history-reuse": "Reuse",
+  "llm-chatcompletion/history-starred": "Star",
   "llm-chatcompletion/history-json-schema": "JSON Schema",
   "llm-chatcompletion/history-prompt": "Prompt",
   "llm-chatcompletion/this-project": "This Project",
-  "llm-chatcompletion/other-project": "Other Project"
+  "llm-chatcompletion/other-project": "Other Project",
+  "llm-chatcompletion/star-hint": "Star the Prompt",
+  "llm-chatcompletion/unstar-hint": "Unstar the Prompt"
 }

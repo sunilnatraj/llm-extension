@@ -6,6 +6,7 @@ import java.time.Instant;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PromptHistory {
+    private String promptId;
     private long projectId;
     private String providerLabel;
     private String responseFormat;
@@ -13,12 +14,13 @@ public class PromptHistory {
     private String jsonSchema;
     private Timestamp added_on;
     private Timestamp last_accessed_on;
-    private int usageCount;
+    private Boolean starred;
 
     public PromptHistory() {
     }
 
-    public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema, Timestamp added_on, Timestamp last_accessed_on, int usageCount) {
+    public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema, Timestamp added_on, Timestamp last_accessed_on, Boolean starred) {
+        this.promptId = String.format("{1}_{2}", projectId, added_on);
         this.projectId = projectId;
         this.providerLabel = providerLabel;
         this.responseFormat = responseFormat;
@@ -26,18 +28,27 @@ public class PromptHistory {
         this.jsonSchema = jsonSchema;
         this.added_on = added_on;
         this.last_accessed_on = last_accessed_on;
-        this.usageCount = usageCount;
+        this.starred = starred;
     }
 
-    public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema) {
+    public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema, Boolean starred) {
+        this.promptId = String.format("{1}_{2}", projectId, added_on);
         this.projectId = projectId;
         this.providerLabel = providerLabel;
         this.responseFormat = responseFormat;
         this.systemPrompt = systemPrompt;
         this.jsonSchema = jsonSchema;
+        this.starred = starred;
         this.added_on = Timestamp.from(Instant.now());
         this.last_accessed_on = Timestamp.from(Instant.now());
-        this.usageCount = 1;
+    }
+
+    public String getPromptId() {
+        return promptId;
+    }
+
+    public void setPromptId(String promptId) {
+        this.promptId = promptId;
     }
 
     public long getProjectId() {
@@ -96,12 +107,15 @@ public class PromptHistory {
         this.last_accessed_on = last_accessed_on;
     }
 
-    public int getUsageCount() {
-        return usageCount;
+    public Boolean getStarred() {
+        return starred;
     }
 
-    public void setUsageCount(int usageCount) {
-        this.usageCount = usageCount;
+    public void setStarred(Boolean starred) {
+        this.starred = starred;
     }
 
+    public boolean isStarred() {
+        return starred;
+    }
 }

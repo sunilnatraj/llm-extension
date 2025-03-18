@@ -22,6 +22,7 @@ public class LLMPromptCommand extends Command {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Boolean _starred = Boolean.parseBoolean(request.getParameter("starred"));
         String param = request.getParameter("project");
         Long projectId;
         try {
@@ -29,7 +30,7 @@ public class LLMPromptCommand extends Command {
         } catch (NumberFormatException e) {
             projectId = 0L;
         }
-        List<PromptHistory> promptHistoryList = LLMUtils.getPromptHistory(projectId);
+        List<PromptHistory> promptHistoryList = LLMUtils.getPromptHistory(projectId, _starred);
         respondJSON(response, promptHistoryList);
     }
 
@@ -45,23 +46,30 @@ public class LLMPromptCommand extends Command {
             respondCSRFError(response);
             return;
         }
+        String _operation = request.getParameter("operation");
+        List<PromptHistory> promptHistoryList = List.of();
+        if ("add".equals(_operation)) {
+            String param = request.getParameter("projectId");
+            Long projectId;
+            try {
+                projectId = Long.parseLong(param);
+            } catch (NumberFormatException e) {
+                projectId = 0L;
+            }
+            String systemContent = request.getParameter("systemContent");
+            String jsonSchema = request.getParameter("jsonSchema");
+            String responseFormat = request.getParameter("responseFormat");
+            String providerLabel = request.getParameter("providerLabel");
 
-        String param = request.getParameter("projectId");
-        Long projectId;
-        try {
-            projectId = Long.parseLong(param);
-        } catch (NumberFormatException e) {
-            projectId = 0L;
+            LLMUtils.addPromptToPromptHistory(projectId, providerLabel, responseFormat, systemContent, jsonSchema);
+            promptHistoryList = LLMUtils.getPromptHistory(projectId, Boolean.FALSE);
+        } else if ("toggleStarred".equals(_operation)) {
+            String _promptId = request.getParameter("promptId");
+            LLMUtils.togglePromptStarred(_promptId);
+        } else if ("reuse".equals(_operation)) {
+            String _promptId = request.getParameter("promptId");
+            LLMUtils.touchPrompt(_promptId);
         }
-        String systemContent = request.getParameter("systemContent");
-        String jsonSchema = request.getParameter("jsonSchema");
-        String responseFormat = request.getParameter("responseFormat");
-
-        LLMConfiguration llmConfiguration = getLLMConfiguration(request);
-
-
-        LLMUtils.addPromptToPromptHistory(projectId, llmConfiguration.getLabel(),responseFormat, systemContent, jsonSchema);
-        List<PromptHistory> promptHistoryList = LLMUtils.getPromptHistory(projectId);
         respondJSON(response, promptHistoryList);
     }
 
@@ -71,8 +79,4 @@ public class LLMPromptCommand extends Command {
         HttpUtilities.respond(response, "error", "PUT not supported");
     }
 
-    protected LLMConfiguration getLLMConfiguration(HttpServletRequest request) {
-        String providerLabel = request.getParameter("providerLabel");
-        return LLMUtils.getLLMProvider(providerLabel);
-    }
 }

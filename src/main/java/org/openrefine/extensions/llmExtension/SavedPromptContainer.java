@@ -1,7 +1,6 @@
 package org.openrefine.extensions.llmExtension;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.openrefine.extensions.llmExtension.PromptHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,7 @@ public class SavedPromptContainer {
         return promptHistory;
     }
 
-    public void setSavedConnections(List<PromptHistory> promptHistory) {
+    public void setPromptHistory(List<PromptHistory> promptHistory) {
         this.promptHistory = promptHistory;
     }
 

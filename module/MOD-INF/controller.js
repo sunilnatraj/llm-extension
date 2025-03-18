@@ -53,6 +53,15 @@ function init() {
     ]
   );
 
+    ClientSideResourceManager.addPaths(
+      "images",
+      module,
+      [
+        "images/reuse.svg",
+        "images/remove.svg"
+      ]
+    );
+
   // Here you can register all sorts of server-side components following the extension points listed in:
   // https://openrefine.org/docs/technical-reference/writing-extensions#server-side-ajax-commands
 }
