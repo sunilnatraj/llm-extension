@@ -263,7 +263,7 @@ public class LLMUtils {
             }
             savedPromptContainer.getPromptHistory().sort(Comparator
                     .<PromptHistory, Boolean>comparing(p -> !(p.getProjectId() == projectId))
-                    .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder())  
+                    .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder())
             );
             return savedPromptContainer.getPromptHistory();
         } catch (JsonParseException e) {
