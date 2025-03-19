@@ -12,7 +12,7 @@
   <groupId>org.openrefine</groupId>
   <artifactId>openrefine-llm-extension</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 
   <name>${extension.name}</name>
   <description>${extension.name} enables data wrangling using LLM</description>
