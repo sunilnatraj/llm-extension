@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/aed38ce9-d884-4146-a82e-a761a13fed20
 ## Configuration
 
 ### Basic Settings
-1. New Column Name: Define the name for the column that will store the AI-generated results
+1. Column: Select if you want to add a new column or update an existing column. Specify the name for the column that will store the AI-generated results
 2. LLM Provider: Select the configured AI provider with pre-defined parameters - Model, Server URL, Temperature, Max Tokens
 3. Response Format: Choose the output structure
 
@@ -41,6 +41,19 @@ Displays:
 2. Response: AI-generated result based on configuration
 
 Allows validation before processing entire dataset
+
+### History
+
+1. Displays a list of previously used prompts, sorted by project and recency
+2. Limited to a maximum of 100 entries
+3. Each entry shows action buttons, source, LLM provider, response format, and prompt content
+4. Actions include the ability to star a prompt (add to favorites) and reuse it
+
+### Starred
+
+1. Shows only prompts that have been marked as favorites/starred
+2. Each entry displays the same information as in History view
+3. Actions include the ability to remove the star (unfavorite) and reuse the prompt
 
 ## Examples
 
