@@ -50,16 +50,11 @@ LLMChatCompletionDialog.prototype.launch = function (column) {
   responseformatSelector.append('<option value="' + "json_object" + '">' + $.i18n("llm-chatcompletion/response-format-json-object") + '</option>');
 
   this.previewInputData = DataTableView.sampleVisibleRows(column).values[0];
-  //elmts.previewRequestTextareaId.text(o.values[0]);
 
   var level = DialogSystem.showDialog(frame);
   var dismiss = function () { DialogSystem.dismissUntil(level - 1); };
 
-  //this._renderPreview(this.previewInputData);
-
-
   elmts.llmselector.on('change', function () {
-    // this._elmts.previewResponseTextareaId.text($.i18n("llm-chatcompletion/response-help-text"));
     $(".preview-textarea[bind='previewResponseTextareaId']").val($.i18n("llm-chatcompletion/response-help-text"));
   });
 
@@ -259,7 +254,7 @@ LLMChatCompletionDialog.prototype._renderPreview = function (data) {
     llmProviderInfo.responseFormat = selectedresponseFormat;
     llmProviderInfo.systemContent = jQueryTrim(self._elmts.systemPromptTextarea.val());
     llmProviderInfo.jsonSchema = jQueryTrim(self._elmts.jsonSchemaTextarea.val());
-    llmProviderInfo.userContent = data; // self._elmts.previewRequestTextareaId.val();
+    llmProviderInfo.userContent = data;
 
     var response = "";
     try {
@@ -310,17 +305,15 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
       var actionCell = $('<td></td>').appendTo(row);
       var actionContainer = $('<div></div>').addClass("action-container").appendTo(actionCell);
 
-      // ✅ Star Icon (as a clickable `<a>`)
-      var starIcon = $('<a href="javascript:void(0)">&nbsp;</a>') // Prevents navigation issues
+      var starIcon = $('<a href="javascript:void(0)">&nbsp;</a>')
           .addClass(prompt.starred ? "data-table-star-on" : "data-table-star-off")
           .attr("title", prompt.starred ? _unStarHint  : _starHint)
-          .data("promptId", prompt.promptId) // Store promptId instead of full object
+          .data("promptId", prompt.promptId)
           .on("click", function (event) {
-              event.preventDefault(); // Prevent accidental navigation
+              event.preventDefault();
 
               var promptId = $(this).data("promptId");
 
-              // ✅ Call API to toggle 'starred' state
               Refine.postProcess(
                   "llm-extension",
                   "llm-prompt",
@@ -330,14 +323,12 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
                       promptId: promptId
                   }
               );
-
-              // ✅ Toggle class based on current state
               $(this).toggleClass("data-table-star-on data-table-star-off");
           });
       starIcon.appendTo(actionContainer);
 
       $('<img>')
-          .attr("src", "extension/llm-extension/images/reuse.svg") // Path to the image
+          .attr("src", "extension/llm-extension/images/reuse.svg")
           .addClass("reuse-icon")
           .attr("title", _reuseButton)
           .data("prompt", prompt)
@@ -379,7 +370,7 @@ LLMChatCompletionDialog.prototype._renderHistory = function () {
     $("#jsonSchemaTextareaId").val(promptData.jsonSchema);
 
     $("#llm-preview-tabs").tabs();
-    $("#llm-preview-tabs").tabs("option", "active", 0);  // Switch to the first tab (Preview)
+    $("#llm-preview-tabs").tabs("option", "active", 0);
   });
 };
 
@@ -421,14 +412,14 @@ LLMChatCompletionDialog.prototype._renderStarred = function () {
       var actionContainer = $('<div></div>').addClass("action-container").appendTo(actionCell);
 
       $('<img>')
-        .attr("src", "extension/llm-extension/images/remove.svg") // Path to the image
+        .attr("src", "extension/llm-extension/images/remove.svg")
         .addClass("delete-icon")
         .attr("title", _unStarHint)
         .data("promptId", prompt.promptId)
         .appendTo(actionContainer);
 
       $('<img>')
-          .attr("src", "extension/llm-extension/images/reuse.svg") // Path to the image
+          .attr("src", "extension/llm-extension/images/reuse.svg")
           .addClass("reuse-icon")
           .attr("title", _reuseButton)
           .data("prompt", prompt)
@@ -469,7 +460,7 @@ LLMChatCompletionDialog.prototype._renderStarred = function () {
     $("#jsonSchemaTextareaId").val(promptData.jsonSchema);
 
     $("#llm-preview-tabs").tabs();
-    $("#llm-preview-tabs").tabs("option", "active", 0);  // Switch to the first tab (Preview)
+    $("#llm-preview-tabs").tabs("option", "active", 0);
   });
 
   $(document).off("click", ".delete-icon");
