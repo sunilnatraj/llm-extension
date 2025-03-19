@@ -217,7 +217,7 @@ public class LLMUtils {
                             .stream()
                             .sorted(
                                     Comparator.comparing(PromptHistory::isStarred, Comparator.reverseOrder())
-                                            .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder()) 
+                                            .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder())
                             )
                             .collect(Collectors.toList());
                     sortedPrompts = sortedPrompts.subList(0, sortedPrompts.size() - _trimSize);
