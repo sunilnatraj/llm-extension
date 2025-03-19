@@ -68,7 +68,7 @@ public class ChatCompletionService {
             );
 
             String payload = objectMapper.writeValueAsString(payloadObject);
-            logger.info("chatCompletion - invoke - payload: {}", payload);
+            //logger.info("chatCompletion - invoke - payload: {}", payload);
 
             // Create HTTP request
             HttpRequest request = HttpRequest.newBuilder()

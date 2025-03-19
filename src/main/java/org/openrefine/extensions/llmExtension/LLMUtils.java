@@ -210,18 +210,22 @@ public class LLMUtils {
             PromptHistory promptHistory = new PromptHistory(projectId, providerLabel, responseFormat, systemPrompt, jsonSchema, Boolean.FALSE);
             String savedPromptHistoryFile = getExtensionFilePath(PROMPT_HISTORY_FILE_NAME);
             SavedPromptContainer savedPromptContainer = getSavedPromptHistory(savedPromptHistoryFile);
-            if ( savedPromptContainer.getPromptHistory().size() >= PROMPT_HISTORY_LIMIT ) {
-                int _trimSize = (savedPromptContainer.getPromptHistory().size() - PROMPT_HISTORY_LIMIT) + 1;
-                List<PromptHistory> sortedPrompts = savedPromptContainer.getPromptHistory()
-                        .stream()
-                        .sorted(Comparator.comparing(PromptHistory::getLast_accessed_on).reversed())
-                        .collect(Collectors.toList());
-                sortedPrompts = sortedPrompts.subList(0, sortedPrompts.size() - _trimSize);
-                savedPromptContainer.setPromptHistory(sortedPrompts);
+            if ( !isPromptHistoryExists(savedPromptContainer, promptHistory) ) {
+                if (savedPromptContainer.getPromptHistory().size() >= PROMPT_HISTORY_LIMIT) {
+                    int _trimSize = (savedPromptContainer.getPromptHistory().size() - PROMPT_HISTORY_LIMIT) + 1;
+                    List<PromptHistory> sortedPrompts = savedPromptContainer.getPromptHistory()
+                            .stream()
+                            .sorted(
+                                    Comparator.comparing(PromptHistory::isStarred, Comparator.reverseOrder())
+                                            .thenComparing(PromptHistory::getLast_accessed_on, Comparator.reverseOrder()) 
+                            )
+                            .collect(Collectors.toList());
+                    sortedPrompts = sortedPrompts.subList(0, sortedPrompts.size() - _trimSize);
+                    savedPromptContainer.setPromptHistory(sortedPrompts);
+                }
+                savedPromptContainer.getPromptHistory().add(promptHistory);
+                _mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedPromptHistoryFile), savedPromptContainer);
             }
-            savedPromptContainer.getPromptHistory().add(promptHistory);
-            _mapper.writerWithDefaultPrettyPrinter().writeValue(new File(savedPromptHistoryFile), savedPromptContainer);
-
         } catch (JsonGenerationException e1) {
             logger.error("JsonGenerationException: {}", e1);
             // e1.printStackTrace();
@@ -325,4 +329,13 @@ public class LLMUtils {
             // e1.printStackTrace();
         }
     }
+
+    private static boolean isPromptHistoryExists(SavedPromptContainer savedPromptContainer, PromptHistory promptHistory) {
+        return savedPromptContainer.getPromptHistory().stream()
+                .anyMatch(p -> p.getProviderLabel().equals(promptHistory.getProviderLabel()) &&
+                        p.getResponseFormat().equals(promptHistory.getResponseFormat()) &&
+                        p.getSystemPrompt().equals(promptHistory.getSystemPrompt()) &&
+                        p.getJsonSchema().equals(promptHistory.getJsonSchema()));
+    }
+
 }

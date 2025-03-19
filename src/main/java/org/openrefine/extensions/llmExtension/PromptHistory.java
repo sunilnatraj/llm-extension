@@ -20,7 +20,7 @@ public class PromptHistory {
     }
 
     public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema, Timestamp added_on, Timestamp last_accessed_on, Boolean starred) {
-        this.promptId = String.format("{1}_{2}", projectId, added_on);
+        this.promptId = String.format("%s_%d", projectId, added_on.getTime());
         this.projectId = projectId;
         this.providerLabel = providerLabel;
         this.responseFormat = responseFormat;
@@ -32,7 +32,6 @@ public class PromptHistory {
     }
 
     public PromptHistory(long projectId, String providerLabel, String responseFormat, String systemPrompt, String jsonSchema, Boolean starred) {
-        this.promptId = String.format("{1}_{2}", projectId, added_on);
         this.projectId = projectId;
         this.providerLabel = providerLabel;
         this.responseFormat = responseFormat;
@@ -41,6 +40,7 @@ public class PromptHistory {
         this.starred = starred;
         this.added_on = Timestamp.from(Instant.now());
         this.last_accessed_on = Timestamp.from(Instant.now());
+        this.promptId = String.format("%s_%d", projectId, this.added_on.getTime());
     }
 
     public String getPromptId() {

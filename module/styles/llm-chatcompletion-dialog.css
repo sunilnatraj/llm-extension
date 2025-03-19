@@ -122,10 +122,18 @@ div.input-container-llm>input, div.input-container-llm>textarea {
     border: 1px solid #ddd;
 }
 
+.starred-table-container {
+    max-height: 250px; /* Adjust height as needed */
+    max-width: flex;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
 
 /* Table Styling for History */
 .history-table {
     width: 100%;
+    min-height: 250px;
+    max-height: 250px;
     border-collapse: collapse;
 }
 
