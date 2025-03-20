@@ -71,6 +71,9 @@ public class LLMProviderCommand extends Command {
         if (! request.getParameter("seed").isEmpty()) {
             llmConfiguration.setSeed(Integer.parseInt(request.getParameter("seed")));
         }
+        if (! request.getParameter("waitTime").isEmpty()) {
+            llmConfiguration.setWaitTime(Integer.parseInt(request.getParameter("waitTime")));
+        }
         return llmConfiguration;
     }
 

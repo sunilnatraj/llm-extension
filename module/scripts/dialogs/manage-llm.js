@@ -94,6 +94,7 @@ ManageLLMSettingsUI.prototype.addLLMProvider = function (mode, _llmProviderDetai
     elmts.llmMaxTokens.text($.i18n("llm-detail/maxTokens"));
     elmts.llmTopP.text($.i18n("llm-detail/topP"));
     elmts.llmSeed.text($.i18n("llm-detail/seed"));
+    elmts.llmWaitTime.text($.i18n("llm-detail/waitTime"));
 
     elmts.llmPromptHelp.text($.i18n("llm-chatcompletion/prompt-help"));
     elmts.testButton.text($.i18n("llm-detail/test"));
@@ -110,6 +111,7 @@ ManageLLMSettingsUI.prototype.addLLMProvider = function (mode, _llmProviderDetai
       elmts.llmMaxTokensInput[0].value = _llmProviderDetail.maxTokens;
       elmts.llmTopPInput[0].value = _llmProviderDetail.topP;
       elmts.llmSeedInput[0].value = _llmProviderDetail.seed;
+      elmts.llmWaitTimeInput[0].value = _llmProviderDetail.waitTime;
     }
     let level = DialogSystem.showDialog(frame);
 
@@ -127,6 +129,8 @@ ManageLLMSettingsUI.prototype.addLLMProvider = function (mode, _llmProviderDetai
           llmProviderInfo.maxTokens = elmts.llmMaxTokensInput.val();
           llmProviderInfo.topP = elmts.llmTopPInput.val();
           llmProviderInfo.seed = elmts.llmSeedInput.val();
+          llmProviderInfo.waitTime = elmts.llmWaitTimeInput.val();
+
           if ( mode === 'update') {
             llmProviderInfo.updateKey = _llmProviderDetail.label;
           }
@@ -156,6 +160,7 @@ ManageLLMSettingsUI.prototype.addLLMProvider = function (mode, _llmProviderDetai
           requestPayload.maxTokens = elmts.llmMaxTokensInput.val();
           requestPayload.topP = elmts.llmTopPInput.val();
           requestPayload.seed = elmts.llmSeedInput.val();
+          requestPayload.waitTime = elmts.llmWaitTimeInput.val();
           requestPayload.subCommand = "test";
 
           var errorMessage = ManageLLMSettingsUI.validateLLMProvider(requestPayload);
@@ -192,7 +197,11 @@ ManageLLMSettingsUI.validateLLMProvider = function (llmProviderInfo) {
   }
 
   if ( llmProviderInfo.maxTokens <= 0 ) {
-    errorMessage = errorMessage.concat($.i18n('llm-detail/provider-maxtokens-error'));
+    errorMessage = errorMessage.concat($.i18n('llm-detail/provider-maxtokens-error')).concat("\n");
+  }
+
+  if ( llmProviderInfo.waitTime < 0 ) {
+      errorMessage = errorMessage.concat($.i18n('llm-detail/provider-waittime-error')).concat("\n");
   }
 
   return errorMessage;

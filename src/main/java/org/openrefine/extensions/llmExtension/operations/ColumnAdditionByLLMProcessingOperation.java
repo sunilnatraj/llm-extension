@@ -203,6 +203,13 @@ public class ColumnAdditionByLLMProcessingOperation extends EngineDependentOpera
                 if (_canceled) {
                     break;
                 }
+                if ( _llmConfiguration.getWaitTime() > 0 ) {
+                    try {
+                        Thread.sleep(_llmConfiguration.getWaitTime());
+                    } catch (InterruptedException e) {
+                        // do nothing
+                    }
+                }
             }
 
             if (!_canceled) {

@@ -12,8 +12,9 @@ public class LLMConfiguration {
     private String apiKey;
     private Double topP;
     private Integer seed;
+    private int waitTime;
 
-    public LLMConfiguration(String label, String apiURL, String modelName, double temperature, int maxTokens, String apiKey, Double topP, Integer seed) {
+    public LLMConfiguration(String label, String apiURL, String modelName, double temperature, int maxTokens, String apiKey, Double topP, Integer seed, int waitTime) {
         this.label = label;
         this.apiURL = apiURL;
         this.modelName = modelName;
@@ -22,6 +23,7 @@ public class LLMConfiguration {
         this.apiKey = apiKey;
         this.topP = topP;
         this.seed = seed;
+        this.waitTime = waitTime;
     }
 
     public LLMConfiguration() {
@@ -92,6 +94,14 @@ public class LLMConfiguration {
         this.seed = seed;
     }
 
+    public int getWaitTime() {
+        return waitTime;
+    }
+
+    public void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
+    }
+
     @Override
     public String toString() {
         return "LLMConfiguration{" +
@@ -103,6 +113,7 @@ public class LLMConfiguration {
                 ", apiKey='" + apiKey + '\'' +
                 ", topP='" + topP + '\'' +
                 ", seed='" + seed + '\'' +
+                ", waitTime='" + waitTime + '\'' +
                 '}';
     }
 }
