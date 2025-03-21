@@ -4,24 +4,27 @@ Documentation for managing LLM Provider which capatures the details of the AI se
 ## Overview
 This guide explains how to configure an LLM Provider by specifying key details such as the model, API key, temperature, top-p, seed, and max tokens.
 
-## Demo Video
+If you want to use an LLM that does not support the /chat/completions endpoint, refer the [section](#llms-that-dont-support-the-chatcompletions-endpoint)
 
+## Demo Video
 
 https://github.com/user-attachments/assets/e0c689de-3aff-4ece-8194-c483b4f17b5f
 
 
 ## Configuration Fields
 
-| Field	| Description |
-|-------|-------------|
-| Label | A unique user-friendly name for the LLM provider. |
-| Server URL | The endpoint for the chat completion API |
-| Model | The model to use. Ensure the model is supported by the platform. |
-| API Key | The authentication key for accessing the API. If your service is running locally or does not support authentication set a dummy value |
-| Temperature | Controls randomness in responses (1 = balanced, 0 = deterministic, >1 = more creative). |
-| Top-P | Controls nucleus sampling (0.8 means tokens with 80% cumulative probability are considered). |
-| Seed | Ensures reproducible responses when set (e.g., 32). If left blank, responses may vary. |
-| Max Tokens | The maximum number of tokens the response can generate. Higher values allow longer responses but consume more API usage. |
+| Field	      | Description                                                                                                                                                      |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Label       | A unique user-friendly name for the LLM provider.                                                                                                                |
+| Server URL  | The endpoint for the chat completion API                                                                                                                         |
+| Model       | The model to use. Ensure the model is supported by the platform.                                                                                                 |
+| API Key     | The authentication key for accessing the API. If your service is running locally or does not support authentication set a dummy value                            |
+| Temperature | Controls randomness in responses (1 = balanced, 0 = deterministic, >1 = more creative).                                                                          |
+| Top-P       | Controls nucleus sampling (0.8 means tokens with 80% cumulative probability are considered).                                                                     |
+| Seed        | Ensures reproducible responses when set (e.g., 32). If left blank, responses may vary.                                                                           |
+| Max Tokens  | The maximum number of tokens the response can generate. Higher values allow longer responses but consume more API usage.                                         |
+| Wait Time   | Specify the duration to wait between requests. Set it to 0 for no wait between requests or time in milliseconds e.g. for a 2 second delay set the value as 2000. |
+ 
 
 ## Buttons & Actions
 | Button	| Function |
@@ -61,3 +64,11 @@ A seed is a fixed starting point for a random number generator. Since language m
 1. Without a fixed seed: The model will generate different responses each time you run it (even with the same prompt).
 2. With a fixed seed (seed = 42, for example): The model will follow the same random path and give the same response every time.
 
+
+## LLMs that don't support the /chat/completions endpoint
+
+If you want to use an LLM that doesn't natively support the /chat/completions endpoint (like Cohere, AI21, or older models), you can use [LiteLLM Proxy](https://docs.litellm.ai/docs/simple_proxy) Server to standardize your API interactions:
+1. All requests use the familiar /chat/completions endpoint regardless of the target model
+2. Parameters are normalized across providers (temperature, max_tokens, etc.)
+3. Response formats are standardized to match OpenAI's structure
+4. Behind the scenes, LiteLLM handles the translation between the OpenAI format and provider-specific formats
