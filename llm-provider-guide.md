@@ -6,7 +6,7 @@ This guide explains how to configure an LLM Provider by specifying key details s
 
 If you want to use an LLM that does not support the /chat/completions endpoint, refer the [section](#llms-that-dont-support-the-chatcompletions-endpoint)
 
-### [Ollama guide][(https://github.com/sunilnatraj/llm-extension/blob/master/ollama-guide.md)]
+### [Ollama guide](https://github.com/sunilnatraj/llm-extension/blob/master/ollama-guide.md)
 ### [Groq guide](https://github.com/sunilnatraj/llm-extension/blob/master/groq-guide.md)
 ### [OpenRouter guide](https://github.com/sunilnatraj/llm-extension/blob/master/openrouter-guide.md)
 
