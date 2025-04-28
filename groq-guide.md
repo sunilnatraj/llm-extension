@@ -8,14 +8,14 @@ running on Groq hardware. It provides:
 [List of LLM modesl supported](https://console.groq.com/docs/models)
 
 ## Rate Limits
-[Refer documentation](https://console.groq.com/docs/rate-limits)
-Know your limits in the free tier - https://console.groq.com/dashboard/limits
-Check usage - https://console.groq.com/dashboard/usage
+1. [Refer documentation](https://console.groq.com/docs/rate-limits)
+2. Know your limits in the free tier - https://console.groq.com/dashboard/limits
+3. Check usage - https://console.groq.com/dashboard/usage
 
 ## API Key
-Obtain an API key after logging into console.groq.com
-Create API Key >> https://console.groq.com/keys >> Save the API Key
-Dashboard - https://console.groq.com/dashboard/
+1. Obtain an API key after logging into console.groq.com
+2. Create API Key >> https://console.groq.com/keys >> Save the API Key
+3. Dashboard - https://console.groq.com/dashboard/
 
 ## OpenAI compatibility
 The Groq API has been designed to be mostly compatible with OpenAI's client libraries, allowing existing applications to be configured with minimal effort to run on Groq and experience its inference speed.
@@ -36,3 +36,4 @@ For details on all attributes refer the setup guide.
 achieved by modifying the instance label (e.g., Groq-DeepSeek) and specifying the desired model name (e.g.,
 deepseek-r1-distill-llama-70b). Other configuration parameters may be adjusted as required or retained with their existing values.
 
+![image](https://github.com/user-attachments/assets/a8427a50-1de5-4f38-b08a-7c2633813012)
