@@ -10,12 +10,12 @@ different models using a single API key and a standardized OpenAI-compatible API
 [Refer documentation](https://openrouter.ai/docs/api-reference/limits)
 
 ## API Key
-Obtain an API key after logging into openrouter.ai.
-Create API Key - https://openrouter.ai/settings/keys >> Create API Key >> Save <your key>
+1. Obtain an API key after logging into openrouter.ai.
+2. Create API Key - https://openrouter.ai/settings/keys >> Create API Key >> Save <your key>
 
-Manage your account - https://openrouter.ai/settings/preferences
-Check your credit - https://openrouter.ai/settings/credits 
-Quck start guide - https://openrouter.ai/docs/quickstart
+3. Manage your account - https://openrouter.ai/settings/preferences
+4. Check your credit - https://openrouter.ai/settings/credits 
+5. Quck start guide - https://openrouter.ai/docs/quickstart
 
 ## OpenAI compatibility
 It is completely compatible with OpenAI and supports an array of parameters. See here for details
@@ -34,4 +34,6 @@ For details on all attributes refer the setup guide.
 
 ### NB: Multiple OpenRouter instances can be created using 
 different models while utilizing the same API key. This can be achieved by modifying the instance label (e.g. OpenRouter-DeepSeek) and specifying the desired model name (e.g., deepseek/deepseek-v3-base:free). Other configuration parameters may be adjusted as required or retained with their existing values.
+
+![image](https://github.com/user-attachments/assets/6e2d9023-a450-43b1-9233-b63eaeb84dab)
 
