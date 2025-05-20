@@ -25,6 +25,15 @@ public class ChatCompletionRequest {
         this.seed = seed;
     }
 
+    public ChatCompletionRequest(String model, ResponseFormat responseFormat, List<Message> messages, int maxTokens, double temperature, Double top_p) {
+        this.model = model;
+        this.response_format = responseFormat;
+        this.messages = messages;
+        this.max_tokens = maxTokens;
+        this.temperature = temperature;
+        this.top_p = top_p;
+    }
+
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ResponseFormat {

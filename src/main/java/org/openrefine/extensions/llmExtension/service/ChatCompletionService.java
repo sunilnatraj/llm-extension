@@ -57,15 +57,28 @@ public class ChatCompletionService {
                 }
             }
 
-            ChatCompletionRequest payloadObject = new ChatCompletionRequest(
-                    llmConfig.getModelName(),
-                    _responseFormat,
-                    messages,
-                    llmConfig.getMaxTokens(),
-                    llmConfig.getTemperature(),
-                    llmConfig.getTopP(),
-                    llmConfig.getSeed()
-            );
+            ChatCompletionRequest payloadObject;
+            // Google AI API do not support seed
+            if (apiUrl.contains("generativelanguage.googleapis.com")) {
+                payloadObject = new ChatCompletionRequest(
+                        llmConfig.getModelName(),
+                        _responseFormat,
+                        messages,
+                        llmConfig.getMaxTokens(),
+                        llmConfig.getTemperature(),
+                        llmConfig.getTopP()
+                );
+            } else {
+                payloadObject = new ChatCompletionRequest(
+                        llmConfig.getModelName(),
+                        _responseFormat,
+                        messages,
+                        llmConfig.getMaxTokens(),
+                        llmConfig.getTemperature(),
+                        llmConfig.getTopP(),
+                        llmConfig.getSeed()
+                );
+            }
 
             String payload = objectMapper.writeValueAsString(payloadObject);
             //logger.info("chatCompletion - invoke - payload: {}", payload);
